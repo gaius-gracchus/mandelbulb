@@ -21,7 +21,8 @@ OUTPUT_STL = 'results/1.0_5.0/stack.stl'
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
-stack = np.load( INPUT_NPY )
+_stack = np.load( INPUT_NPY )
+stack = np.rot90( m = _stack, k = -1, axes = ( 0, 2 ) )
 
 verts, faces, normals, values = marching_cubes_lewiner(
   volume = stack,
