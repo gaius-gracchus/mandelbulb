@@ -22,8 +22,8 @@ Z0 = 0.0 + 0.0j
 N = 1000
 
 POW_START = 1.00
-POW_STOP = 4.00
-DELTA_POW = 0.1
+POW_STOP = 5.00
+DELTA_POW = 0.01
 
 OUTPUT_IMG_FMT = '{:.2f}.png'
 
