@@ -16,13 +16,13 @@ from mandelpow import mandelpow
 
 RESULTS_DIR = 'results'
 
-MAX_ITER = 100
+MAX_ITER = 1000
 MAX_VALUE = 2.
 Z0 = 0.0 + 0.0j
-N = 1000
+N = 250
 
 POW_START = 1.00
-POW_STOP = 5.00
+POW_STOP = 4.00
 DELTA_POW = 0.01
 
 OUTPUT_IMG_FMT = '{:.2f}.png'
