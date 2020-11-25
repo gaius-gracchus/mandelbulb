@@ -1,0 +1,10 @@
+# ignore everything
+*
+
+# don't ignore Python files or Fortran files
+!*.py
+!*.f90
+
+# don't ignore Makefile or .gitignore
+!Makefile
+!.gitignore
