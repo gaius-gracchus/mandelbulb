@@ -19,9 +19,9 @@ module mandelpow
 
     integer( 4 ), intent( in ) :: max_iter
 
-    real( 4 ), intent( in ) :: pow, max_value
+    real( 4 ), intent( in ) :: max_value
 
-    complex( 8 ), intent( in ) :: z0
+    complex( 8 ), intent( in ) :: pow, z0
 
     ! output arguments
     !..........................................................................!
