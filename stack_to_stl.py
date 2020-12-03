@@ -5,6 +5,8 @@
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
+import os
+
 import numpy as np
 
 from skimage.measure import (
@@ -18,9 +20,11 @@ import pymesh
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
-INPUT_NPY = 'results/1.0_4.0/stack.npy'
+RESULTS_DIR = 'results/2.0_3.0/'
 
-OUTPUT_STL = 'results/1.0_4.0/stack.stl'
+INPUT_NPY = os.path.join( RESULTS_DIR, 'stack.npy' )
+
+OUTPUT_STL = os.path.join( RESULTS_DIR, 'stack.stl' )
 
 PROCESS_LIST = [
   pymesh.remove_isolated_vertices,

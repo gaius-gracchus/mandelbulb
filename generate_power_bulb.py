@@ -19,9 +19,9 @@ RESULTS_DIR = 'results'
 MAX_ITER = 1000
 MAX_VALUE = 2.
 Z0 = 0.0 + 0.0j
-N = 1000
+N = 250
 
-POW_MAGNITUDE = 2.0 + 0.0j
+POW_MAGNITUDE = 1.0 + 0.0j
 N_THETA = 101
 
 OUTPUT_IMG_FMT = '{:03d}.png'
@@ -63,6 +63,7 @@ with open( output_params, 'w' ) as f:
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
 pows = POW_MAGNITUDE * np.exp( np.linspace( 0, 2 * np.pi, N_THETA )[ : -1 ] * 1j )
+pows += 1.0 + 0.0j
 print( pows )
 
 stack = np.zeros( ( pows.size, N, N ), dtype = np.int32, order = 'F' )

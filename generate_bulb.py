@@ -19,13 +19,13 @@ RESULTS_DIR = 'results'
 MAX_ITER = 1000
 MAX_VALUE = 2.
 Z0 = 0.0 + 0.0j
-N = 250
+N = 1000
 
-POW_START = 1.00
+POW_START = 3.00
 POW_STOP = 4.00
-DELTA_POW = 0.01
+DELTA_POW = 0.005
 
-OUTPUT_IMG_FMT = '{:.2f}.png'
+OUTPUT_IMG_FMT = '{:.3f}.png'
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
