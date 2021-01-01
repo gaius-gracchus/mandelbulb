@@ -34,14 +34,11 @@ SIZE_Z = 75
 # hole is 4% of width of voxel domain
 HOLE_WIDTH = 0.04
 
-# RESULTS_DIRS = [
-#   # 'results/1.0_2.0/',
-#   'results/2.0_3.0/',
-#   'results/3.0_4.0/',
-#   'results/4.0_5.0/', ]
-
 RESULTS_DIRS = [
-  'results/2.0_3.1/', ]
+  'results/1.0_2.0/',
+  'results/2.0_3.0/',
+  'results/3.0_4.0/',
+  'results/4.0_5.0/', ]
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
@@ -49,9 +46,6 @@ def pymesh_to_stl( part, stl ):
 
   faces = part.faces
   verts = part.vertices
-
-  print( 'faces shape: ', faces.shape )
-  print( 'verts shape: ', verts.shape )
 
   # create `numpy-stl` mesh from extracted vertices and faces
   # https://numpy-stl.readthedocs.io/en/latest/usage.html#creating-mesh-objects-from-a-list-of-vertices-and-faces
@@ -89,55 +83,18 @@ def process( _stack, stl ):
   for function in PROCESS_LIST:
     _m, info = function( mesh = _m )
 
-  pymesh_to_stl(
-    part = _m,
-    stl = os.path.join( 'results/2.0_3.1/', f'full.stl' ) )
-
   print( 'Separating mesh into loose pieces' )
   # separate mesh into individual unconnected parts
   parts = pymesh.separate_mesh( _m )
 
-  # # DEBUG
-  # output_pkl = os.path.join( 'results/2.0_3.0/', 'parts.pkl' )
-  # with open( output_pkl, 'wb' ) as f:
-  #   pickle.dump( parts, f )
-
   # find the part with the most vertices
   nverts = [ part.vertices.shape[ 0 ] for part in parts ]
-  # print( sorted( nverts, reverse = True ) )
-  # big_idx = np.argmax( nverts )
-  # part = parts[ big_idx ]
+  big_idx = np.argmax( nverts )
+  part = parts[ big_idx ]
 
-  sorted_parts = np.argsort( nverts )[ :: -1 ][ :2 ]
-
-  for i, idx in enumerate( sorted_parts ):
-    pymesh_to_stl( part = parts[ idx ], stl = os.path.join( 'results/2.0_3.1/', f'part_{i}.stl' ) )
-
-  combined_part = pymesh.boolean(
-    mesh_1 = parts[ sorted_parts[ 0 ] ],
-    mesh_2 = parts[ sorted_parts[ 1 ] ],
-    operation = 'difference'  )
-
-  faces = np.concatenate( [ parts[ sorted_parts[ 0 ] ].faces, parts[ sorted_parts[ 1 ] ].faces ] )
-  verts = np.concatenate( [ parts[ sorted_parts[ 0 ] ].vertices, parts[ sorted_parts[ 1 ] ].vertices ] )
-
-  print( 'faces shape: ', faces.shape )
-  print( 'verts shape: ', verts.shape )
-
-  # create `numpy-stl` mesh from extracted vertices and faces
-  # https://numpy-stl.readthedocs.io/en/latest/usage.html#creating-mesh-objects-from-a-list-of-vertices-and-faces
-  m = mesh.Mesh( np.zeros( faces.shape[ 0 ], dtype = mesh.Mesh.dtype ) )
-  for i, f in enumerate( faces ):
-    for j in range( 3 ):
-      m.vectors[ i ][ j ] = verts[ f[ j ], : ]
-
-  # export the STL file of the mesh
-  m.save( stl )
-
-  # pymesh_to_stl(
-  #   part = combined_part,
-  #   stl = os.path.join( 'results/2.0_3.1/', f'combined_part.stl' ) )
-
+  pymesh_to_stl(
+    part = part,
+    stl = stl )
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
@@ -147,10 +104,15 @@ for results_dir in RESULTS_DIRS:
 
   INPUT_NPY = os.path.join( results_dir, 'stack.npy' )
 
-  OUTPUT_STL = os.path.join( results_dir, 'stack_hole.stl' )
+  OUTPUT_STACK_STL = os.path.join( results_dir, 'stack_hole.stl' )
+  OUTPUT_HOLE_STL = os.path.join( results_dir, 'hole.stl' )
 
   # load NumPy array of stack
   _stack = np.load( INPUT_NPY )
+  _tmp = np.ones_like( _stack[ 0 ] )
+  _tmp = _tmp[ np.newaxis, :, : ]
+
+  _stack = np.concatenate( [ _tmp, _stack, _tmp ] )
 
   N = _stack.shape[ -1 ]
   hw = int( N * HOLE_WIDTH )
@@ -164,7 +126,7 @@ for results_dir in RESULTS_DIRS:
 
   _stack[ :, slc, slc ] = 0
 
-  # process( _stack = hole, stl = os.path.join( results_dir, 'hole.stl' ) )
-  process( _stack = _stack, stl = OUTPUT_STL )
+  process( _stack = hole, stl = OUTPUT_HOLE_STL )
+  process( _stack = _stack, stl = OUTPUT_STACK_STL )
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
