@@ -28,11 +28,17 @@ PROCESS_LIST = [
   pymesh.remove_degenerated_triangles, ]
 
 # size of voxel domain in mm
-SIZE_XY = 300
-SIZE_Z = 75
+SIZE_XY = 150.
+SIZE_Z = 37.5
 
-# hole is 4% of width of voxel domain
-HOLE_WIDTH = 0.04
+# difference in hole width and column width in mm
+TOLERANCE = 0.5
+
+# hole width as percentage of voxel domain width
+HOLE_WIDTH = 0.08
+
+# column width as percentage of voxel domain width
+COLUMN_WIDTH = HOLE_WIDTH - TOLERANCE / SIZE_XY
 
 RESULTS_DIRS = [
   'results/1.0_2.0/',
@@ -105,7 +111,7 @@ for results_dir in RESULTS_DIRS:
   INPUT_NPY = os.path.join( results_dir, 'stack.npy' )
 
   OUTPUT_STACK_STL = os.path.join( results_dir, 'stack_hole.stl' )
-  OUTPUT_HOLE_STL = os.path.join( results_dir, 'hole.stl' )
+  OUTPUT_HOLE_STL = os.path.join( results_dir, 'column.stl' )
 
   # load NumPy array of stack
   _stack = np.load( INPUT_NPY )
@@ -116,17 +122,24 @@ for results_dir in RESULTS_DIRS:
 
   N = _stack.shape[ -1 ]
   hw = int( N * HOLE_WIDTH )
+  cw = int( N * COLUMN_WIDTH )
 
-  slc = slice(
+  print( hw, cw )
+
+  slc_h = slice(
     ( N - hw - 1) // 2,
     ( N + hw - 1) // 2 )
 
-  hole = np.zeros_like( _stack )
-  hole[ :, slc, slc ] = _stack[ :, slc, slc ]
+  slc_c = slice(
+    ( N - cw - 1) // 2,
+    ( N + cw - 1) // 2 )
 
-  _stack[ :, slc, slc ] = 0
+  column = np.zeros_like( _stack )
+  column[ :, slc_c, slc_c ] = _stack[ :, slc_c, slc_c ]
 
-  process( _stack = hole, stl = OUTPUT_HOLE_STL )
+  _stack[ :, slc_h, slc_h ] = 0
+
+  process( _stack = column, stl = OUTPUT_HOLE_STL )
   process( _stack = _stack, stl = OUTPUT_STACK_STL )
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
